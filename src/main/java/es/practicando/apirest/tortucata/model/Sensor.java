@@ -1,7 +1,9 @@
 package es.practicando.apirest.tortucata.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,17 +11,16 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 import lombok.Data;
 
-/**
- *  
- * Esta clase hace referencia a cualquier sensor que está en algún terrario, siendo propiedad de un usuario, 
- * y pudiendo estar en diferentes terrarios a lo largo del tiempo pudiendo devolver valores de temperatura y humedad,
- * horas de Luz tanto actuales como máximas y mínimas en un periodo. 
- *
- */
 @Data
 @Entity
 @Table(name = "sensor")
@@ -29,7 +30,7 @@ public class Sensor implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long idSensor;
+	private Long id;
 	
 	@Column(name = "modelo", length = 30, nullable = false)
 	private String modelo;
@@ -37,18 +38,24 @@ public class Sensor implements Serializable{
 	@Column(name = "estado", nullable = false)
 	@Enumerated(value = EnumType.STRING)
 	private Estado estado;
-	
-	@Column(name = "temperatura")
-	private Integer temperatura;
-	
-	@Column(name = "humedad")
-	private Integer humedad;
-	
+
 	public enum Estado {
 		ACTIVO,
 		INACTIVO
 	}
 	
+	// DB Relationships
+	@JsonIgnore
+	@OneToMany(
+			mappedBy = "sensor",
+			cascade = CascadeType.ALL
+	)		
+    private List<Medicion> mediciones;
 	
-
+	@ManyToOne
+    @JoinColumn(name="terrario_id", referencedColumnName = "id", nullable = false)
+    private Terrario terrario;
+	
+	
+	
 }

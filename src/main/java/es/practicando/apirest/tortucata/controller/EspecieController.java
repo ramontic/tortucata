@@ -29,8 +29,6 @@ public class EspecieController {
 	@Autowired 
 	private EspecieService especieService;
 	
-	
-	//Crear una especie
 	@PostMapping
 	public ResponseEntity<?> create(@RequestBody Especie especie) {
 		
@@ -38,12 +36,13 @@ public class EspecieController {
 		
 	}
 	
-	
-	//Visualizar una especie
-	@GetMapping("/{id}")
-	public ResponseEntity<?> read(@PathVariable(value= "id") Long id){
+	@GetMapping("/{genero},{especie},{subespecie}")
+	public ResponseEntity<?> read(
+			@PathVariable(value= "genero") String genero,
+			@PathVariable(value= "especie") String especie,
+			@PathVariable(value= "subespecie") String subespecie){
 		
-		Optional<Especie> oEspecie = especieService.findById(id);
+		Optional<Especie> oEspecie = especieService.findByGeneroAndEspecieAndSubespecie(genero, especie, subespecie);
 		
 		if (!oEspecie.isPresent()) {
 			return ResponseEntity.notFound().build();
@@ -52,11 +51,13 @@ public class EspecieController {
 		return ResponseEntity.ok(oEspecie);
 	}
 	
-	//Actualizar una especie
-	@PutMapping("/{id}")
-	public ResponseEntity<?> update(@RequestBody Especie especieDetalles, @PathVariable Long id){
+	@PutMapping("/{genero},{especie},{subespecie}")
+	public ResponseEntity<?> update(@RequestBody Especie especieDetalles, 
+			@PathVariable(value= "genero") String genero,
+			@PathVariable(value= "especie") String especie,
+			@PathVariable(value= "subespecie") String subespecie){
 		
-		Optional<Especie> oEspecie = especieService.findById(id);
+		Optional<Especie> oEspecie = especieService.findByGeneroAndEspecieAndSubespecie(genero, especie, subespecie);
 		
 		if (!oEspecie.isPresent()) {
 			return ResponseEntity.notFound().build();
@@ -67,32 +68,27 @@ public class EspecieController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(especieService.save(oEspecie.get()));
 	}
 	
-	//Borrar una especie
-	@DeleteMapping("/{id}")
-	public ResponseEntity<?> delete(@PathVariable Long id){
+	@DeleteMapping("/{genero},{especie},{subespecie}")
+	public ResponseEntity<?> delete(
+			@PathVariable(value= "genero") String genero,
+			@PathVariable(value= "especie") String especie,
+			@PathVariable(value= "subespecie") String subespecie){
 		
-		if (!especieService.findById(id).isPresent()) {
+		if (!especieService.findByGeneroAndEspecieAndSubespecie(genero, especie, subespecie).isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
 		
-		especieService.deleteById(id);
+		especieService.deleteByGeneroAndEspecieAndSubespecie(genero, especie, subespecie);
 		return ResponseEntity.ok().build();
 	}
 	
-	
-	//Visualizar todas los especies
-		@GetMapping
-		public List<Especie> readAll(){
-			
-			List<Especie> especies = StreamSupport
-					.stream(especieService.findAll().spliterator(), false)
-					.collect(Collectors.toList());
-			
-			return especies;
-			
-		}
-	
-	
+	@GetMapping
+	public List<Especie> readAll(){
 		
-
+		List<Especie> especies = StreamSupport
+				.stream(especieService.findAll().spliterator(), false)
+				.collect(Collectors.toList());
+		
+		return especies;
+	}
 }

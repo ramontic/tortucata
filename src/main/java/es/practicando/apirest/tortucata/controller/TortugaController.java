@@ -29,17 +29,12 @@ public class TortugaController {
 	@Autowired 
 	private TortugaService tortugaService;
 	
-	
-	//Crear una tortuga
 	@PostMapping
 	public ResponseEntity<?> create(@RequestBody Tortuga tortuga) {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(tortugaService.save(tortuga));
-		
 	}
 	
-	
-	//Visualizar una tortuga
 	@GetMapping("/{id}")
 	public ResponseEntity<?> read(@PathVariable(value= "id") Long idTortuga){
 		
@@ -52,7 +47,6 @@ public class TortugaController {
 		return ResponseEntity.ok(oTortuga);
 	}
 	
-	//Actualizar una tortuga
 	@PutMapping("/{id}")
 	public ResponseEntity<?> update(@RequestBody Tortuga tortugaDetalles, @PathVariable Long id){
 		
@@ -67,7 +61,6 @@ public class TortugaController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(tortugaService.save(oTortuga.get()));
 	}
 	
-	//Borrar un tortuga
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id){
 		
@@ -79,20 +72,13 @@ public class TortugaController {
 		return ResponseEntity.ok().build();
 	}
 	
-	
-	//Visualizar todos los tortugas
-		@GetMapping
-		public List<Tortuga> readAll(){
-			
-			List<Tortuga> tortugas = StreamSupport
-					.stream(tortugaService.findAll().spliterator(), false)
-					.collect(Collectors.toList());
-			
-			return tortugas;
-			
-		}
-	
-	
+	@GetMapping
+	public List<Tortuga> readAll(){
 		
-
+		List<Tortuga> tortugas = StreamSupport
+				.stream(tortugaService.findAll().spliterator(), false)
+				.collect(Collectors.toList());
+		
+		return tortugas;
+	}
 }

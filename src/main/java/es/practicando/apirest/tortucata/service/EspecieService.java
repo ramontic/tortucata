@@ -13,9 +13,9 @@ public interface EspecieService {
 	
 	public Page<Especie> findAll(Pageable pageable);
 	
-	public Optional<Especie> findById(Long id);
+	public Optional<Especie> findByGeneroAndEspecieAndSubespecie(String genero, String especie, String subespecie);
 	
 	public Especie save(Especie especie);
 	
-	public void deleteById(Long id);
+	public void deleteByGeneroAndEspecieAndSubespecie(String genero, String especie, String subespecie);
 }

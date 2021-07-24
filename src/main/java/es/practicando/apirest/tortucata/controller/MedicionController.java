@@ -7,7 +7,6 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,65 +18,70 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import es.practicando.apirest.tortucata.model.Usuario;
-import es.practicando.apirest.tortucata.service.UsuarioService;
+import es.practicando.apirest.tortucata.model.Medicion;
+import es.practicando.apirest.tortucata.service.MedicionService;
+import es.practicando.apirest.tortucata.service.SensorService;
 
 @RestController
-@RequestMapping("/api/usuarios")
-public class UsuarioController {
+@RequestMapping("/api/mediciones")
+public class MedicionController {
 	
 	@Autowired 
-	private UsuarioService usuarioService;
+	private MedicionService medicionService;
+	
+	@Autowired
+	SensorService sensorService;
 	
 	@PostMapping
-	public ResponseEntity<?> create(@RequestBody Usuario usuario) {
+	public ResponseEntity<?> create(@RequestBody Medicion medicion) {
 		
-		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.save(usuario));
+		return ResponseEntity.status(HttpStatus.CREATED).body(medicionService.save(medicion));
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> read(@PathVariable(value= "id") Long idUsuario){
+	public ResponseEntity<?> read(@PathVariable(value= "id") Long idMedicion){
 		
-		Optional<Usuario> oUsuario = usuarioService.findById(idUsuario);
+		Optional<Medicion> oMedicion = medicionService.findById(idMedicion);
 		
-		if (!oUsuario.isPresent()) {
+		if (!oMedicion.isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
 		
-		return ResponseEntity.ok(oUsuario);
+		return ResponseEntity.ok(oMedicion);
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> update(@RequestBody Usuario usuarioDetalles, @PathVariable Long id){
+	public ResponseEntity<?> update(@RequestBody Medicion medicionDetalles, @PathVariable Long id){
 		
-		Optional<Usuario> oUsuario = usuarioService.findById(id);
+		Optional<Medicion> oMedicion = medicionService.findById(id);
 		
-		if (!oUsuario.isPresent()) {
+		if (!oMedicion.isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
 		
-		BeanUtils.copyProperties(usuarioDetalles, oUsuario.get(), "id");
+		BeanUtils.copyProperties(medicionDetalles, oMedicion.get(), "id");
 		
-		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.save(oUsuario.get()));
+		return ResponseEntity.status(HttpStatus.CREATED).body(medicionService.save(oMedicion.get()));
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id){
 		
-		if (!usuarioService.findById(id).isPresent()) {
+		if (!medicionService.findById(id).isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
 		
-		usuarioService.deleteById(id);
+		medicionService.deleteById(id);
 		return ResponseEntity.ok().build();
 	}
 	
 	@GetMapping
-	public List<Usuario> readAll() {
+	public List<Medicion> readAll() {
 
-		List<Usuario> usuarios = StreamSupport.stream(usuarioService.findAll().spliterator(), false)
+		List<Medicion> mediciones = StreamSupport.stream(medicionService.findAll().spliterator(), false)
 				.collect(Collectors.toList());
 
-		return usuarios;
+		return mediciones;
+
 	}
 }

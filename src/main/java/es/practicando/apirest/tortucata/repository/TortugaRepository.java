@@ -6,6 +6,4 @@ import org.springframework.stereotype.Repository;
 import es.practicando.apirest.tortucata.model.Tortuga;
 
 @Repository
-public interface TortugaRepository extends JpaRepository<Tortuga, Long>{
-
-}
+public interface TortugaRepository extends JpaRepository<Tortuga, Long>{}

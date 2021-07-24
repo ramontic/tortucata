@@ -3,67 +3,71 @@ package es.practicando.apirest.tortucata.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "usuario")
+@Table(name = "usuario",
+		uniqueConstraints = {
+				@UniqueConstraint(name="usuario_email_unique",columnNames = "email"),
+				@UniqueConstraint(name="usuario_telefono_unique",columnNames = "telefono")
+		})
 public class Usuario implements Serializable{
 
 	private static final long serialVersionUID = 7155583754420389385L;
 
 	@Id
-	//@GeneratedValue(strategy=GenerationType.AUTO, generator="native")
-	//@GenericGenerator(name="native",strategy="native")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(length = 50, nullable = false)
+	@Column(name = "nombre", length = 50, nullable = false, updatable = true)
 	private String nombre;
 	
-	@Column(length = 50)
+	@Column(name = "apellido_paterno", length = 50, nullable = true, updatable = true)
 	private String apellidoPaterno;
 	
-	@Column(name = "email", nullable= false, length = 50, unique = true)
+	@Column(name = "email", nullable= false, updatable = false)
 	private String email;
 	
-	@Column(name = "telefono", nullable= false, unique = true)
+	@Column(name = "ciudad", nullable= true, updatable = true)
+	private String ciudad;
+	
+	@Column(name = "telefono", nullable= false, updatable = false)
 	private Long telefono;
 	
-	@Column(name = "fechaAlta", updatable = false, nullable = false)
-	private LocalDate fechaAlta;
+	@Column(name = "fecha_alta", updatable = false, nullable = false)
+	private LocalDate fechaAlta = LocalDate.now();
 	
-	private Boolean enabled;
+	private Boolean enabled = true;
 	
-	@Column(name = "username", nullable = false)
-	private String username;
 	
-	@Column(name = "password", nullable = false)
-	private String password;
+	// DB Relationships
 	
-	@Transient 
-	private String confirmPassword;
+	@JsonIgnore
+	@OneToMany(
+			mappedBy = "usuario", 
+			cascade = CascadeType.ALL
+	)		
+    private List<Terrario> terrarios;
 	
-
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="user_roles"
-		,joinColumns=@JoinColumn(name="user_id")
-		,inverseJoinColumns=@JoinColumn(name="role_id"))
-	private Set<Role> roles;
-
+	@JsonIgnore
+	@OneToMany(
+			mappedBy = "usuario", 
+			cascade = CascadeType.ALL			
+	)		
+    private List<Tortuga> tortugas;
 }

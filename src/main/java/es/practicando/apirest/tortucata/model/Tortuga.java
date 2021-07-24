@@ -12,19 +12,29 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
 
 @Data
 @Entity
-@Table(name = "tortuga")
-@AllArgsConstructor
-@NoArgsConstructor
+@Table(name = "tortuga",
+		uniqueConstraints = {
+				@UniqueConstraint(name="tortuga_usuario_unique",columnNames = "usuario_id"),
+				@UniqueConstraint(name="tortuga_terrario_unique",columnNames = "terrario_id")
+		})
 public class Tortuga implements Serializable{
 	
 	private static final long serialVersionUID = 3517591061181504089L;
@@ -40,27 +50,53 @@ public class Tortuga implements Serializable{
 	@Column(length = 50, name = "nombre", nullable = false)
 	private String nombre;
 	
-	@Column(name = "fechaNacimiento")
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	@Column(name = "fecha_nacimiento", nullable = false)
 	private LocalDate fechaNacimiento;
+	
+	@Column(length = 50, name = "num_chip", nullable = false)
+	private Long numChip;
 	
 	@Transient
 	private Integer edad;
-	
 
-	public Integer getEdad() {
-		return LocalDate.now().getYear() - this.fechaNacimiento.getYear() ;
-	}
-	
-	@Column(name = "taxonomia")
-	private String taxonomia;
-	
-	@Column(name = "foto" ,nullable = true)
+	@Column(name = "foto",nullable = true)
     @Basic(optional = true, fetch = FetchType.LAZY)
     @Lob()
     private byte[] foto;
 
-	
 	public enum Sexo {
 		MACHO,HEMBRA,DESCONOCIDO
+	}
+	
+	
+	// DB Relationships
+	
+	@ManyToOne(optional = false)
+    @JoinColumn(name="usuario_id", referencedColumnName = "id", nullable = false)
+    private Usuario usuario;	
+	
+	@ManyToOne(optional = false)
+    @JoinColumn(name="terrario_id", referencedColumnName = "id", nullable = false)
+    private Terrario terrario;
+	
+	@ManyToOne(optional = false)
+    @JoinColumn(name="genero_id", referencedColumnName = "genero", nullable = false)
+	@JoinColumn(name="especie_id", referencedColumnName = "especie", nullable = false)
+	@JoinColumn(name="subespecie_id", referencedColumnName = "subespecie", nullable = false)
+    private Especie especie;
+	
+	
+	// Methods
+	
+	public Integer getEdad() {
+		
+		if (fechaNacimiento != null) {
+			return LocalDate.now().getYear() - this.fechaNacimiento.getYear() ;
+		}
+		
+		return null;
 	}
 }

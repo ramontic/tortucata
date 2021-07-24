@@ -1,19 +1,27 @@
 package es.practicando.apirest.tortucata.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 
 @Data
 @Entity
+@IdClass(EspecieId.class)
 @Table(name = "especie")
 @SequenceGenerator(
 	    name="EspecieSeq",
@@ -26,30 +34,46 @@ public class Especie implements Serializable{
 	private static final long serialVersionUID = -6775359414880120322L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EspecieSeq")  
-	private Long id;
-
 	@Column(length = 50, nullable = false)
 	private String genero;
 	
+	@Id
 	@Column(length = 50, nullable = false)
 	private String especie;
 	
+	@Id
 	@Column(length = 50, nullable = false)
 	private String	subespecie; 
 	
 	@Column(length = 50)
-	private String	nComun;
+	private String	nombreComun;
 	
 	@Column(length = 50)
-	private String	distGeog;
+	private String	distGeo;
 	
-	@Column(length = 50)
-	private String	taxon;
 	
-	private int tempIdealMin, tempIdealMax, humIdealMin, humIdealMax, longEsperadaMacho, longEsperadaHembra,
+	private Integer tempIdealMin, tempIdealMax, humIdealMin, humIdealMax, longEsperadaMacho, longEsperadaHembra,
 	pesoEsperadoMacho, pesoEsperadoHembra;
 	
-
-
+	// DB Relationships
+	@JsonIgnore
+	@OneToMany(mappedBy = "especie")		
+    private List<Tortuga> tortugas;
+	
+	//@JsonIgnore
+	@ManyToMany(cascade = CascadeType.REMOVE)
+	@JoinTable(
+	        name = "rel_especies_compatibles",
+	        joinColumns = {
+	        		@JoinColumn(name = "genero", referencedColumnName = "genero"), 
+	        		@JoinColumn(name = "especie", referencedColumnName = "especie"), 
+	        		@JoinColumn(name = "subespecie", referencedColumnName = "subespecie")
+	        },
+	        inverseJoinColumns = {
+	        		@JoinColumn(name = "generoB", referencedColumnName = "genero"), 
+	        		@JoinColumn(name = "especieB", referencedColumnName = "especie"), 
+	        		@JoinColumn(name = "subespecieB", referencedColumnName = "subespecie")
+	        }
+	)
+	private List<Especie> especiesCompatibles;
 }

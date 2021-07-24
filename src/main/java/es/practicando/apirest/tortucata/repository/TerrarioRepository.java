@@ -6,6 +6,4 @@ import org.springframework.stereotype.Repository;
 import es.practicando.apirest.tortucata.model.Terrario;
 
 @Repository
-public interface TerrarioRepository extends JpaRepository<Terrario, Long>{
-
-}
+public interface TerrarioRepository extends JpaRepository<Terrario, Long>{}

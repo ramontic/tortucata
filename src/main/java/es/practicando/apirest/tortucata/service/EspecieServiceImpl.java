@@ -33,9 +33,9 @@ public class EspecieServiceImpl implements EspecieService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Optional<Especie> findById(Long id) {
+	public Optional<Especie> findByGeneroAndEspecieAndSubespecie(String genero, String especie, String subespecie) {
 		
-		return especieRepo.findById(id);
+		return especieRepo.findByGeneroAndEspecieAndSubespecie(genero, especie, subespecie);
 	}
 
 	@Override
@@ -47,9 +47,9 @@ public class EspecieServiceImpl implements EspecieService {
 
 	@Override
 	@Transactional
-	public void deleteById(Long id) {
+	public void deleteByGeneroAndEspecieAndSubespecie(String genero, String especie, String subespecie) {
 		
-		especieRepo.deleteById(id);
+		especieRepo.deleteByGeneroAndEspecieAndSubespecie(genero, especie, subespecie);
 	}
 
 	

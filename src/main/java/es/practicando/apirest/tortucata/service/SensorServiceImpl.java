@@ -51,8 +51,4 @@ public class SensorServiceImpl implements SensorService{
 		
 		sensorRepo.deleteById(id);
 	}
-	
-	
-	
-
 }

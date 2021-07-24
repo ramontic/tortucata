@@ -8,48 +8,48 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.practicando.apirest.tortucata.model.Role;
-import es.practicando.apirest.tortucata.repository.RoleRepository;
+import es.practicando.apirest.tortucata.model.Medicion;
+import es.practicando.apirest.tortucata.repository.MedicionRepository;
 
 @Service
-public class RoleServiceImpl implements RoleService{
+public class MedicionServiceImpl implements MedicionService{
 	
 	@Autowired
-	private RoleRepository roleRepo;
+	private MedicionRepository medicionRepo;
 
 	@Override
 	@Transactional(readOnly = true)
-	public Iterable<Role> findAll() {
+	public Iterable<Medicion> findAll() {
 		
-		return roleRepo.findAll();
+		return medicionRepo.findAll();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Page<Role> findAll(Pageable paginado) {
+	public Page<Medicion> findAll(Pageable paginado) {
 		
-		return roleRepo.findAll(paginado);
+		return medicionRepo.findAll(paginado);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Optional<Role> findById(Long id) {
+	public Optional<Medicion> findById(Long id) {
 		
-		return roleRepo.findById(id);
+		return medicionRepo.findById(id);
 	}
 
 	@Override
 	@Transactional
-	public Role save(Role role) {
+	public Medicion save(Medicion medicion) {
 		
-		return roleRepo.save(role);
+		return medicionRepo.save(medicion);
 	}
 
 	@Override
 	@Transactional
 	public void deleteById(Long id) {
 		
-		roleRepo.deleteById(id);
+		medicionRepo.deleteById(id);
 	}
 	
 	

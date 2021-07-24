@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import es.practicando.apirest.tortucata.model.Sensor;
 import es.practicando.apirest.tortucata.service.SensorService;
 
+
 @RestController
 @RequestMapping("/api/sensores")
 public class SensorController {
@@ -29,17 +30,12 @@ public class SensorController {
 	@Autowired 
 	private SensorService sensorService;
 	
-	
-	//Crear un usuario
 	@PostMapping
 	public ResponseEntity<?> create(@RequestBody Sensor sensor) {
 		
-		return ResponseEntity.status(HttpStatus.CREATED).body(sensorService.save(sensor));
-		
+		return ResponseEntity.status(HttpStatus.CREATED).body(sensorService.save(sensor));	
 	}
 	
-	
-	//Visualizar un sensor
 	@GetMapping("/{id}")
 	public ResponseEntity<?> read(@PathVariable(value= "id") Long idSensor){
 		
@@ -52,7 +48,6 @@ public class SensorController {
 		return ResponseEntity.ok(oSensor);
 	}
 	
-	//Actualizar un sensor
 	@PutMapping("/{id}")
 	public ResponseEntity<?> update(@RequestBody Sensor sensorDetalles, @PathVariable Long id){
 		
@@ -62,13 +57,11 @@ public class SensorController {
 			return ResponseEntity.notFound().build();
 		}
 		
-		
 		BeanUtils.copyProperties(sensorDetalles, oSensor.get(), "id");
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(sensorService.save(oSensor.get()));
 	}
 	
-	//Borrar un sensor
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id){
 		
@@ -80,34 +73,12 @@ public class SensorController {
 		return ResponseEntity.ok().build();
 	}
 	
-	
-	// Visualizar todos los sensores
 	@GetMapping
-	public List<Sensor> readAll() {
+	public ResponseEntity<List<Sensor>> readAll() {
 
 		List<Sensor> sensores = StreamSupport.stream(sensorService.findAll().spliterator(), false)
 				.collect(Collectors.toList());
 
-		return sensores;
-
+		return ResponseEntity.ok(sensores);
 	}
-
-	/*
-	 * // Visualizar todos los sensores
-	 * 
-	 * @GetMapping public ResponseEntity<List<Sensor>> readAll() {
-	 * 
-	 * List<Sensor> sensores =
-	 * StreamSupport.stream(sensorService.findAll().spliterator(), false)
-	 * .collect(Collectors.toList());
-	 * 
-	 * return ResponseEntity.ok(sensores);
-	 * 
-	 * }
-	 */
-
-	
-	
-		
-
 }

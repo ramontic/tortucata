@@ -51,8 +51,4 @@ public class TortugaServiceImpl implements TortugaService{
 		
 		tortugaRepo.deleteById(id);
 	}
-	
-	
-	
-
 }

@@ -51,8 +51,4 @@ public class TerrarioServiceImpl implements TerrarioService{
 		
 		terrarioRepo.deleteById(id);
 	}
-	
-	
-	
-
 }

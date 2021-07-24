@@ -6,6 +6,4 @@ import org.springframework.stereotype.Repository;
 import es.practicando.apirest.tortucata.model.Usuario;
 
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
-
-}
+public interface UsuarioRepository extends JpaRepository<Usuario, Long>{}

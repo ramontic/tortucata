@@ -29,17 +29,12 @@ public class TerrarioController {
 	@Autowired 
 	private TerrarioService terrarioService;
 	
-	
-	//Crear un usuario
 	@PostMapping
 	public ResponseEntity<?> create(@RequestBody Terrario usuario) {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(terrarioService.save(usuario));
-		
 	}
 	
-	
-	//Visualizar un usuario
 	@GetMapping("/{id}")
 	public ResponseEntity<?> read(@PathVariable(value= "id") Long idTerrario){
 		
@@ -52,7 +47,6 @@ public class TerrarioController {
 		return ResponseEntity.ok(oTerrario);
 	}
 	
-	//Actualizar un usuario
 	@PutMapping("/{id}")
 	public ResponseEntity<?> update(@RequestBody Terrario terrarioDetalles, @PathVariable Long id){
 		
@@ -64,11 +58,9 @@ public class TerrarioController {
 		
 		BeanUtils.copyProperties(terrarioDetalles, oTerrario.get(), "id");
 		
-		
 		return ResponseEntity.status(HttpStatus.CREATED).body(terrarioService.save(oTerrario.get()));
 	}
 	
-	//Borrar un usuario
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id){
 		
@@ -80,20 +72,14 @@ public class TerrarioController {
 		return ResponseEntity.ok().build();
 	}
 	
-	
-	//Visualizar todos los usuarios
-		@GetMapping
-		public List<Terrario> readAll(){
-			
-			List<Terrario> usuarios = StreamSupport
-					.stream(terrarioService.findAll().spliterator(), false)
-					.collect(Collectors.toList());
-			
-			return usuarios;
-			
-		}
-	
-	
+	@GetMapping
+	public List<Terrario> readAll(){
 		
-
+		List<Terrario> usuarios = StreamSupport
+				.stream(terrarioService.findAll().spliterator(), false)
+				.collect(Collectors.toList());
+		
+		return usuarios;
+		
+	}
 }

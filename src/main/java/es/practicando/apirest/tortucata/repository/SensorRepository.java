@@ -6,6 +6,4 @@ import org.springframework.stereotype.Repository;
 import es.practicando.apirest.tortucata.model.Sensor;
 
 @Repository
-public interface SensorRepository extends JpaRepository<Sensor, Long>{
-
-}
+public interface SensorRepository extends JpaRepository<Sensor, Long>{}
