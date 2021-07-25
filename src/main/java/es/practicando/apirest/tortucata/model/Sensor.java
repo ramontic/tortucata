@@ -11,8 +11,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -52,9 +50,10 @@ public class Sensor implements Serializable{
 	)		
     private List<Medicion> mediciones;
 	
-	@ManyToOne
-    @JoinColumn(name="terrario_id", referencedColumnName = "id", nullable = false)
-    private Terrario terrario;
+	@JsonIgnore
+	@OneToMany(mappedBy = "sensor",
+			cascade = CascadeType.ALL)
+    private List<Uso> terrarios;
 	
 	
 	

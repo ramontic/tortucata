@@ -2,6 +2,7 @@ package es.practicando.apirest.tortucata.model;
 
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -17,13 +18,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 import lombok.Data;
 
 @Data
 @Entity
 @Table(name = "terrario")
+
 public class Terrario implements Serializable{
 
 	private static final long serialVersionUID = 4665468467024909189L;
@@ -59,16 +65,25 @@ public class Terrario implements Serializable{
     @JoinColumn(name="usuario_id", referencedColumnName = "id", nullable = false)
     private Usuario usuario;
 	
-	@JsonIgnore
-	@OneToMany(
-			mappedBy = "terrario", 
-			cascade = CascadeType.ALL
-	)		
-    private List<Sensor> sensores;
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	@Column(name = "in_terrario_usuario", nullable = false)
+	private LocalDate inTerrarioUsuario;
 	
-	@JsonIgnore
-	@OneToMany(
-			mappedBy = "terrario"
-	)		
-    private List<Tortuga> tortugas;
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	@Column(name = "out_terrario_usuario", nullable = true)
+	private LocalDate outTerrarioUsuario;
+	//---------------------------------------------------------------------
+	
+	
+	@OneToMany(mappedBy = "terrario",
+			cascade = CascadeType.ALL)
+	private List<Uso> sensores;
+	
+	@OneToMany(mappedBy = "terrario",
+			cascade = CascadeType.ALL)
+	private List<Habitante> tortugas;
 }

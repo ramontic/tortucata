@@ -2,8 +2,10 @@ package es.practicando.apirest.tortucata.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,11 +17,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -32,8 +36,7 @@ import lombok.Data;
 @Entity
 @Table(name = "tortuga",
 		uniqueConstraints = {
-				@UniqueConstraint(name="tortuga_usuario_unique",columnNames = "usuario_id"),
-				@UniqueConstraint(name="tortuga_terrario_unique",columnNames = "terrario_id")
+				@UniqueConstraint(name="tortuga_usuario_unique",columnNames = "usuario_id")
 		})
 public class Tortuga implements Serializable{
 	
@@ -78,9 +81,10 @@ public class Tortuga implements Serializable{
     @JoinColumn(name="usuario_id", referencedColumnName = "id", nullable = false)
     private Usuario usuario;	
 	
-	@ManyToOne(optional = false)
-    @JoinColumn(name="terrario_id", referencedColumnName = "id", nullable = false)
-    private Terrario terrario;
+	@JsonIgnore
+	@OneToMany(mappedBy = "tortuga",
+			cascade = CascadeType.ALL)
+    private List<Habitante> terrarios;
 	
 	@ManyToOne(optional = false)
     @JoinColumn(name="genero_id", referencedColumnName = "genero", nullable = false)
