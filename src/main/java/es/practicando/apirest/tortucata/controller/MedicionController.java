@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,7 +35,7 @@ public class MedicionController {
 	SensorService sensorService;
 	
 	@PostMapping
-	public ResponseEntity<?> create(@RequestBody Medicion medicion) {
+	public ResponseEntity<?> create(@Valid @RequestBody Medicion medicion) {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(medicionService.save(medicion));
 	}
@@ -51,7 +53,7 @@ public class MedicionController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> update(@RequestBody Medicion medicionDetalles, @PathVariable Long id){
+	public ResponseEntity<?> update(@Valid @RequestBody Medicion medicionDetalles, @PathVariable Long id){
 		
 		Optional<Medicion> oMedicion = medicionService.findById(id);
 		

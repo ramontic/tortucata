@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,7 +32,7 @@ public class TerrarioController {
 	private TerrarioService terrarioService;
 	
 	@PostMapping
-	public ResponseEntity<?> create(@RequestBody Terrario usuario) {
+	public ResponseEntity<?> create(@Valid @RequestBody Terrario usuario) {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(terrarioService.save(usuario));
 	}
@@ -48,7 +50,7 @@ public class TerrarioController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> update(@RequestBody Terrario terrarioDetalles, @PathVariable Long id){
+	public ResponseEntity<?> update(@Valid @RequestBody Terrario terrarioDetalles, @PathVariable Long id){
 		
 		Optional<Terrario> oTerrario = terrarioService.findById(id);
 		

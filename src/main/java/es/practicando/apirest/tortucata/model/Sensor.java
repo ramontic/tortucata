@@ -6,8 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,10 +14,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-
+import es.practicando.apirest.tortucata.utils.ValueOfEnum;
 import lombok.Data;
 
 @Data
@@ -32,12 +34,14 @@ public class Sensor implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@NotBlank(message = "{sensor.modelo.notBlanck}")
 	@Column(name = "modelo", length = 30, nullable = false)
 	private String modelo;
 	
+	@NotNull(message = "{sensor.estado.notNull}")
 	@Column(name = "estado", nullable = false)
-	@Enumerated(value = EnumType.STRING)
-	private Estado estado;
+	@ValueOfEnum(enumClass = Estado.class, message = "{sensor.estado.valueOfEnum}")
+	private String estado;
 
 	public enum Estado {
 		ACTIVO,
@@ -50,10 +54,11 @@ public class Sensor implements Serializable{
 			mappedBy = "sensor",
 			cascade = CascadeType.ALL
 	)		
-    private List<Medicion> mediciones;
+    private List<@Valid Medicion> mediciones;
 	
 	@ManyToOne
-    @JoinColumn(name="terrario_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name="terrario_id", referencedColumnName = "id", nullable = true, foreignKey=@ForeignKey(name = "Fk_sensor_terrarioId"))
+	@Valid
     private Terrario terrario;
 	
 	

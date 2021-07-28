@@ -6,9 +6,8 @@ import java.time.LocalDate;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,12 +17,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
+import es.practicando.apirest.tortucata.utils.ValueOfEnum;
 
 import lombok.Data;
 
@@ -32,8 +38,7 @@ import lombok.Data;
 @Entity
 @Table(name = "tortuga",
 		uniqueConstraints = {
-				@UniqueConstraint(name="tortuga_usuario_unique",columnNames = "usuario_id"),
-				@UniqueConstraint(name="tortuga_terrario_unique",columnNames = "terrario_id")
+				@UniqueConstraint(name="tortuga_numChip_unique", columnNames = "num_chip")
 		})
 public class Tortuga implements Serializable{
 	
@@ -43,26 +48,30 @@ public class Tortuga implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "sexo", nullable = false)
-	@Enumerated(value = EnumType.STRING)
-	private Sexo sexo; 
+	@NotNull(message = "{tortuga.sexo.notNull}")
+	@Column(name = "sexo", nullable = false, updatable = true)
+	@ValueOfEnum(enumClass = Sexo.class, message = "{tortuga.sexo.valueOfEnum}")
+	private String sexo; 
 	
+	@Size(min = 3, message = "{tortuga.nombre.size}")
+	@NotBlank(message = "{tortuga.nombre.notBlank}")
 	@Column(length = 50, name = "nombre", nullable = false)
 	private String nombre;
 	
 	@JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-	@Column(name = "fecha_nacimiento", nullable = false)
+	@Past(message = "{tortuga.fechaNacimiento.past}")
+	@Column(name = "fecha_nacimiento", nullable = false, updatable = false)
 	private LocalDate fechaNacimiento;
 	
-	@Column(length = 50, name = "num_chip", nullable = false)
-	private Long numChip;
+	@Column(length = 30, name = "num_chip", nullable = true, updatable = true)  // It should be nullable = false, updatable = false. In working progress
+	private String numChip;
 	
 	@Transient
 	private Integer edad;
 
-	@Column(name = "foto",nullable = true)
+	@Column(name = "foto",nullable = true, updatable = true)
     @Basic(optional = true, fetch = FetchType.LAZY)
     @Lob()
     private byte[] foto;
@@ -75,17 +84,20 @@ public class Tortuga implements Serializable{
 	// DB Relationships
 	
 	@ManyToOne(optional = false)
-    @JoinColumn(name="usuario_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name="usuario_id", referencedColumnName = "id", nullable = false, updatable = true, foreignKey=@ForeignKey(name = "Fk_tortuga_usuarioId"))
+	@Valid
     private Usuario usuario;	
 	
 	@ManyToOne(optional = false)
-    @JoinColumn(name="terrario_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name="terrario_id", referencedColumnName = "id", nullable = false, updatable = true, foreignKey=@ForeignKey(name = "Fk_tortuga_terrarioId"))
+	@Valid
     private Terrario terrario;
 	
 	@ManyToOne(optional = false)
     @JoinColumn(name="genero_id", referencedColumnName = "genero", nullable = false)
 	@JoinColumn(name="especie_id", referencedColumnName = "especie", nullable = false)
 	@JoinColumn(name="subespecie_id", referencedColumnName = "subespecie", nullable = false)
+	@Valid
     private Especie especie;
 	
 	

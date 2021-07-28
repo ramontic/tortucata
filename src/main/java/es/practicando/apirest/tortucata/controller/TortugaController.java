@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,7 +32,7 @@ public class TortugaController {
 	private TortugaService tortugaService;
 	
 	@PostMapping
-	public ResponseEntity<?> create(@RequestBody Tortuga tortuga) {
+	public ResponseEntity<?> create(@Valid @RequestBody Tortuga tortuga) {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(tortugaService.save(tortuga));
 	}
@@ -48,7 +50,7 @@ public class TortugaController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> update(@RequestBody Tortuga tortugaDetalles, @PathVariable Long id){
+	public ResponseEntity<?> update(@Valid @RequestBody Tortuga tortugaDetalles, @PathVariable Long id){
 		
 		Optional<Tortuga> oTortuga = tortugaService.findById(id);
 		

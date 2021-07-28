@@ -1,14 +1,12 @@
 package es.practicando.apirest.tortucata.model;
 
-
 import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,9 +14,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import es.practicando.apirest.tortucata.utils.ValueOfEnum;
 import lombok.Data;
 
 @Data
@@ -32,6 +34,7 @@ public class Terrario implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	
 	@Column(length = 3, name = "max_miembros", nullable = true)
 	private int maxMiembros;
 	
@@ -39,11 +42,13 @@ public class Terrario implements Serializable{
 	
 	//private int tempRegMin, tempRegMax, humRegMin, humRegMax, horasRegLuzDirecta; // Variables resultado de cálculos entre Registros de parámetro en el tiempo en un determinado objeto Terrario
 	
+	@NotNull(message = "{terrario.tipoTerrario.notNull}")
 	@Column(name = "tipoTerrario", nullable = false)
-	@Enumerated(value = EnumType.STRING)
-	private TipoTerrario tipoTerrario;
+	@ValueOfEnum(enumClass = TipoTerrario.class, message = "{terrario.tipoTerrario.valueOfEnum}")
+	private String tipoTerrario;
 	
-	@Column(length = 100, name = "info_tecnica", nullable = true)
+	@NotBlank(message = "{terrario.infoTecnica.notBlanck}")
+	@Column(length = 100, name = "info_tecnica", nullable = false)
 	private String infoTecnica;
 	
 	@Column(name = "esAtivo", nullable = false)
@@ -56,7 +61,8 @@ public class Terrario implements Serializable{
 	// DB Relationships
 	
 	@ManyToOne(optional = false)
-    @JoinColumn(name="usuario_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name="usuario_id", referencedColumnName = "id", nullable = false, foreignKey=@ForeignKey(name = "Fk_terrario_usuarioId"))
+	@Valid
     private Usuario usuario;
 	
 	@JsonIgnore
@@ -64,11 +70,12 @@ public class Terrario implements Serializable{
 			mappedBy = "terrario", 
 			cascade = CascadeType.ALL
 	)		
-    private List<Sensor> sensores;
+    private List<@Valid Sensor> sensores;
 	
 	@JsonIgnore
 	@OneToMany(
-			mappedBy = "terrario"
+			mappedBy = "terrario",
+			cascade = CascadeType.ALL
 	)		
-    private List<Tortuga> tortugas;
+    private List<@Valid Tortuga> tortugas;
 }

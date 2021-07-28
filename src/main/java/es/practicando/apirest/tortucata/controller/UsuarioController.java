@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,7 +32,7 @@ public class UsuarioController {
 	private UsuarioService usuarioService;
 	
 	@PostMapping
-	public ResponseEntity<?> create(@RequestBody Usuario usuario) {
+	public ResponseEntity<?> create(@Valid @RequestBody Usuario usuario) {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.save(usuario));
 	}
@@ -48,7 +50,7 @@ public class UsuarioController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> update(@RequestBody Usuario usuarioDetalles, @PathVariable Long id){
+	public ResponseEntity<?> update(@Valid @RequestBody Usuario usuarioDetalles, @PathVariable Long id){
 		
 		Optional<Usuario> oUsuario = usuarioService.findById(id);
 		

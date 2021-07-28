@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,7 +32,7 @@ public class EspecieController {
 	private EspecieService especieService;
 	
 	@PostMapping
-	public ResponseEntity<?> create(@RequestBody Especie especie) {
+	public ResponseEntity<?> create(@Valid @RequestBody Especie especie) {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(especieService.save(especie));
 		
@@ -52,7 +54,7 @@ public class EspecieController {
 	}
 	
 	@PutMapping("/{genero},{especie},{subespecie}")
-	public ResponseEntity<?> update(@RequestBody Especie especieDetalles, 
+	public ResponseEntity<?> update(@Valid @RequestBody Especie especieDetalles, 
 			@PathVariable(value= "genero") String genero,
 			@PathVariable(value= "especie") String especie,
 			@PathVariable(value= "subespecie") String subespecie){

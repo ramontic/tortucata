@@ -14,6 +14,13 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -34,23 +41,33 @@ public class Usuario implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@NotEmpty(message = "{usuario.nombre.empty}")
+	@Size(min = 3, max = 50, message = "{usuario.nombre.size}")
 	@Column(name = "nombre", length = 50, nullable = false, updatable = true)
 	private String nombre;
 	
 	@Column(name = "apellido_paterno", length = 50, nullable = true, updatable = true)
 	private String apellidoPaterno;
 	
+	
+	@Email
+	@NotBlank(message = "{usuario.email.notBlank}")
 	@Column(name = "email", nullable= false, updatable = false)
 	private String email;
 	
 	@Column(name = "ciudad", nullable= true, updatable = true)
 	private String ciudad;
 	
+	@NotBlank(message = "{usuario.telefono.notBlank}")
+	@Pattern(regexp = "[6][0-9]{8}", message = "{usuario.telefono.pattern}")
 	@Column(name = "telefono", nullable= false, updatable = false)
-	private Long telefono;
+	private String telefono;  
 	
-	@Column(name = "fecha_alta", updatable = false, nullable = false)
+	@NotNull(message = "{usuario.fechaAlta.notEmpty}")
+	@Column(name = "fecha_alta", nullable = false, updatable = false)
 	private LocalDate fechaAlta = LocalDate.now();
+	
+	
 	
 	private Boolean enabled = true;
 	
@@ -62,12 +79,12 @@ public class Usuario implements Serializable{
 			mappedBy = "usuario", 
 			cascade = CascadeType.ALL
 	)		
-    private List<Terrario> terrarios;
+    private List<@Valid Terrario> terrarios;
 	
 	@JsonIgnore
 	@OneToMany(
 			mappedBy = "usuario", 
 			cascade = CascadeType.ALL			
 	)		
-    private List<Tortuga> tortugas;
+    private List<@Valid Tortuga> tortugas;
 }

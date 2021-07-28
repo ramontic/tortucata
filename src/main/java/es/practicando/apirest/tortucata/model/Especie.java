@@ -14,6 +14,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -34,31 +37,36 @@ public class Especie implements Serializable{
 	private static final long serialVersionUID = -6775359414880120322L;
 
 	@Id
-	@Column(length = 50, nullable = false)
+	@NotBlank(message = "{especie.genero.notBlanck}")
+	@Column(length = 50, nullable = false, updatable = false)
 	private String genero;
 	
 	@Id
-	@Column(length = 50, nullable = false)
+	@NotBlank(message = "{especie.especie.notBlanck}")
+	@Column(length = 50, nullable = false, updatable = false)
 	private String especie;
 	
 	@Id
-	@Column(length = 50, nullable = false)
+	@NotBlank(message = "{especie.subespecie.notBlanck}")
+	@Column(length = 50, nullable = false, updatable = false)
 	private String	subespecie; 
 	
-	@Column(length = 50)
+	@NotBlank(message = "{especie.nombreComun.notBlanck}")
+	@Column(length = 50, nullable = false, updatable = true)
 	private String	nombreComun;
 	
-	@Column(length = 50)
+	@Column(length = 50, nullable = true, updatable = true)
 	private String	distGeo;
 	
-	
-	private Integer tempIdealMin, tempIdealMax, humIdealMin, humIdealMax, longEsperadaMacho, longEsperadaHembra,
+	@Digits(integer = 3, fraction = 2, message = "{especie.doubles.digits}")
+	@Column(length = 7, nullable = true, updatable = true)
+	private Double tempIdealMin, tempIdealMax, humIdealMin, humIdealMax, longEsperadaMacho, longEsperadaHembra,
 	pesoEsperadoMacho, pesoEsperadoHembra;
 	
 	// DB Relationships
 	@JsonIgnore
 	@OneToMany(mappedBy = "especie")		
-    private List<Tortuga> tortugas;
+    private List<@Valid Tortuga> tortugas;
 	
 	//@JsonIgnore
 	@ManyToMany(cascade = CascadeType.REMOVE)
@@ -75,5 +83,5 @@ public class Especie implements Serializable{
 	        		@JoinColumn(name = "subespecieB", referencedColumnName = "subespecie")
 	        }
 	)
-	private List<Especie> especiesCompatibles;
+	private List<@Valid Especie> especiesCompatibles;
 }
