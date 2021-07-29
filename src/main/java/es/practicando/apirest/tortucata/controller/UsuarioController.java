@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import es.practicando.apirest.tortucata.model.Usuario;
 import es.practicando.apirest.tortucata.service.UsuarioService;
 
+
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
