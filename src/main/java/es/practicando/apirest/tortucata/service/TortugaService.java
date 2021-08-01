@@ -15,6 +15,8 @@ public interface TortugaService {
 	
 	public Optional<Tortuga> findById(Long id);
 	
+	public Optional<Tortuga> findByNombre(String name);
+	
 	public Tortuga save(Tortuga tortuga);
 	
 	public void deleteById(Long id);

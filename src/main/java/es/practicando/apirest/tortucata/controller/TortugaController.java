@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import es.practicando.apirest.tortucata.exception.customized.MyNotFoundException;
 import es.practicando.apirest.tortucata.model.Tortuga;
 import es.practicando.apirest.tortucata.service.TortugaService;
 
@@ -75,12 +76,21 @@ public class TortugaController {
 	}
 	
 	@GetMapping
-	public List<Tortuga> readAll(){
+	public ResponseEntity<?> readAll(){
 		
 		List<Tortuga> tortugas = StreamSupport
 				.stream(tortugaService.findAll().spliterator(), false)
 				.collect(Collectors.toList());
 		
-		return tortugas;
+		return ResponseEntity.ok(tortugas);
+	}
+	
+	@GetMapping("/byName/{nameTortuga}")
+	public ResponseEntity<?> read(@PathVariable(value= "nameTortuga") String nameTortuga){
+		
+		Tortuga tortuga = tortugaService.findByNombre(nameTortuga)
+				.orElseThrow(() -> new  MyNotFoundException(nameTortuga));
+	
+		return ResponseEntity.status(HttpStatus.OK).body(tortuga);
 	}
 }

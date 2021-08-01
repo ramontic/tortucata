@@ -1,7 +1,6 @@
 package es.practicando.apirest.tortucata.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -9,7 +8,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import es.practicando.apirest.tortucata.exception.customized.MyConflictException;
+import es.practicando.apirest.tortucata.exception.customized.MyNotFoundException;
 import es.practicando.apirest.tortucata.model.Usuario;
 import es.practicando.apirest.tortucata.service.UsuarioService;
 
@@ -39,48 +39,48 @@ public class UsuarioController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> read(@PathVariable(value= "id") Long idUsuario){
-		
-		Optional<Usuario> oUsuario = usuarioService.findById(idUsuario);
-		
-		if (!oUsuario.isPresent()) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		return ResponseEntity.ok(oUsuario);
+	public ResponseEntity<?> read(@PathVariable(value= "id") Long id){
+	
+		Usuario usuario = usuarioService.findById(id)
+				.orElseThrow(() -> new  MyNotFoundException(id));
+	
+		return ResponseEntity.status(HttpStatus.OK).body(usuario);
 	}
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<?> update(@Valid @RequestBody Usuario usuarioDetalles, @PathVariable Long id){
 		
-		Optional<Usuario> oUsuario = usuarioService.findById(id);
+		Usuario usuario = usuarioService.findById(id)
+				.orElseThrow(() -> new  MyNotFoundException(id));
 		
-		if (!oUsuario.isPresent()) {
-			return ResponseEntity.notFound().build();
+		// Handling non updatable fields of Usuario entity. Looking for better solution.
+		if(!usuarioDetalles.getEmail().equals(usuario.getEmail()) || 
+				!usuarioDetalles.getTelefono().equals(usuario.getTelefono())) {
+					throw new MyConflictException("el email o teléfono del usuario");			
 		}
+
+		BeanUtils.copyProperties(usuarioDetalles, usuario, "id");
 		
-		BeanUtils.copyProperties(usuarioDetalles, oUsuario.get(), "id");
-		
-		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.save(oUsuario.get()));
+		return ResponseEntity.status(HttpStatus.OK).body(usuarioService.save(usuario));
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id){
 		
 		if (!usuarioService.findById(id).isPresent()) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		}
 		
 		usuarioService.deleteById(id);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 	
 	@GetMapping
-	public List<Usuario> readAll() {
+	public ResponseEntity<?> readAll() {
 
 		List<Usuario> usuarios = StreamSupport.stream(usuarioService.findAll().spliterator(), false)
 				.collect(Collectors.toList());
 
-		return usuarios;
+		return new ResponseEntity<>(usuarios, HttpStatus.OK);
 	}
 }

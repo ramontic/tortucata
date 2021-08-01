@@ -51,4 +51,10 @@ public class TortugaServiceImpl implements TortugaService{
 		
 		tortugaRepo.deleteById(id);
 	}
+
+	@Override
+	public Optional<Tortuga> findByNombre(String nameTortuga) {
+		
+		return tortugaRepo.findByNombre(nameTortuga);
+	}
 }
